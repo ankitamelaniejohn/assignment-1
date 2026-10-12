@@ -40,34 +40,30 @@ header nav[aria-expanded='true'] {
     align-items: center;
     max-width: 1264px;
     padding: 0 32px;
+    margin: auto;
+    height: var(--nav-height);
   }
 
+  /* Logo stays on left */
   header .nav-brand {
-    margin-right: auto; /* keep logo at left */
-    flex-basis: 128px;
-    font-size: var(--heading-font-size-s);
-    font-weight: 700;
-    line-height: 1;
+    flex: 0 0 auto;
   }
 
-  header nav .nav-hamburger {
-    display: none;
-    visibility: hidden;
-  }
-
+  /* Navigation moves to right */
   header nav .nav-sections {
     display: block;
     visibility: visible;
     white-space: nowrap;
-    margin-left: auto; /* push nav items to right */
+    margin-left: auto;
   }
 
   header nav .nav-sections ul {
     display: flex;
-    justify-content: flex-end;
     align-items: center;
     gap: 24px;
     margin: 0;
+    padding: 0;
+    list-style: none;
   }
 
   header nav .nav-sections .default-content-wrapper > ul > li {
