@@ -157,4 +157,10 @@ export default async function decorate(block) {
   navWrapper.className = 'nav-wrapper';
   navWrapper.append(nav);
   block.append(navWrapper);
+
+  // ↓↓↓ add these lines ↓↓↓
+  // in AEM, `block` is the <header> element itself
+  const onScroll = () => block.classList.toggle('is-stuck', window.scrollY > 0);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 }
