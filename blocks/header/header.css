@@ -1,9 +1,31 @@
 /* header and nav layout */
+
+/* sticky must be on <header> itself: its parent (body) is as tall as the page */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
 header .nav-wrapper {
   background-color: var(--background-color);
   width: 100%;
-  z-index: 2;
-  position: fixed;
+  transition: background-color 0.3s ease;
+}
+
+/* once stuck (class added by JS): transparent background */
+header.is-stuck .nav-wrapper,
+header.is-stuck nav .nav-hamburger button {
+  background-color: transparent;
+}
+
+/* keep a solid background while the mobile menu is open, so links stay readable */
+header.is-stuck .nav-wrapper:has(nav[aria-expanded='true']) {
+  background-color: var(--background-color);
+}
+
+header.is-stuck .nav-wrapper:has(nav[aria-expanded='true']) .nav-hamburger button {
+  background-color: var(--background-color);
 }
 
 header nav {
@@ -204,10 +226,6 @@ header nav .nav-tools {
    Desktop overrides: keep this block LAST so it beats the base rules
    ------------------------------------------------------------------ */
 @media (width >= 900px) {
-  header .nav-wrapper {
-    position: relative;
-  }
-
   header nav,
   header nav[aria-expanded='true'] {
     display: flex;
