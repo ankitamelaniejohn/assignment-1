@@ -10,11 +10,17 @@ header {
 header .nav-wrapper {
   background-color: transparent;
   width: 100%;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
 }
 
-/* once stuck (class added by JS): transparent background */
-header.is-stuck .nav-wrapper,
+/* once stuck (class added by JS): translucent grey, overlay-style */
+header.is-stuck .nav-wrapper {
+  background-color: rgb(128 128 128 / 40%); /* lower the % for less opacity */
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+/* the hamburger button must stay transparent, otherwise it paints a second grey box on top */
 header.is-stuck nav .nav-hamburger button {
   background-color: transparent;
 }
