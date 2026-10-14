@@ -1,4 +1,4 @@
-.carousel .carousel-slides-container {
+ .carousel .carousel-slides-container {
   position: relative;
   padding-top: var(--header-height, 120px); /* space for the nav */
 }
@@ -176,4 +176,14 @@
 .carousel {
   width: 100vw;
   margin-left: calc(50% - 50vw);
+}
+
+/* Hide the dots */
+.carousel .carousel-slide-indicators {
+  display: none;
+}
+
+/* Hide the prev/next arrows */
+.carousel .carousel-navigation-buttons {
+  display: none;
 }
