@@ -182,8 +182,3 @@
 .carousel .carousel-slide-indicators {
   display: none;
 }
-
-/* Hide the prev/next arrows */
-.carousel .carousel-navigation-buttons {
-  display: none;
-}
