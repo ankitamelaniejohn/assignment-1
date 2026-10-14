@@ -60,6 +60,16 @@
   object-position: top; /* or: center top */
 }
 
+.carousel .carousel-slide .carousel-slide-content {
+  z-index: 1;
+  position: relative;
+  margin: 68px;
+  padding: 0;
+  color: white;
+  width: var(--slide-content-width, auto);
+  text-shadow: 0 2px 8px rgb(0 0 0 / 60%);
+}
+
 .carousel .carousel-slide-indicators {
   display: flex;
   flex-wrap: wrap;
