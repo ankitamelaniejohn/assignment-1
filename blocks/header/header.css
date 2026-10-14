@@ -28,6 +28,15 @@ header.is-stuck .nav-wrapper:has(nav[aria-expanded='true']) .nav-hamburger butto
   background-color: var(--background-color);
 }
 
+/* also ensure the header has a solid background when the mobile menu is open even if not stuck */
+header .nav-wrapper:has(nav[aria-expanded='true']) {
+  background-color: var(--background-color);
+}
+
+header .nav-wrapper:has(nav[aria-expanded='true']) .nav-hamburger button {
+  background-color: var(--background-color);
+}
+
 header nav {
   box-sizing: border-box;
   display: grid;
