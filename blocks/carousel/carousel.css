@@ -30,7 +30,7 @@
   justify-content: center;
   position: relative;
   width: 100%;
-  min-height: min(50vw, calc(100dvh - var(--header-height)));
+  min-height: max(56.25vw, 500px); /* 16:9 ratio, never shorter than 500px */
 }
 
 .carousel .carousel-slide:has(.carousel-slide-content[data-align='center']) {
