@@ -160,3 +160,20 @@
     --slide-content-width: auto;
   }
 }
+
+/* Break the carousel out of the section's max-width/padding */
+.carousel-container .carousel-wrapper {
+  max-width: unset;
+  padding: 0;
+}
+
+.carousel .carousel-slides-container,
+.carousel .carousel-slides {
+  width: 100%;
+}
+
+/* Fallback if a parent still constrains width: full-viewport bleed */
+.carousel {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+}
