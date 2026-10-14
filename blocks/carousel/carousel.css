@@ -182,3 +182,21 @@
 .carousel .carousel-slide-indicators {
   display: none;
 }
+
+/* Progress bar for carousel */
+.carousel .carousel-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 6px;
+  background-color: rgb(255 255 255 / 40%); /* empty part of the bar */
+  z-index: 2;
+}
+
+.carousel .carousel-progress-fill {
+  height: 100%;
+  width: 0;
+  background-color: #0a66ff; /* change to your blue */
+  transition: width 0.4s ease;
+}
