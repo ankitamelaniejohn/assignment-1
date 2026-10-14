@@ -92,6 +92,28 @@ function createSlide(row, slideIndex, carouselId) {
   return slide;
 }
 
+function addProgressBar(block) {
+  const container = block.querySelector('.carousel-slides-container');
+  const slidesEl = block.querySelector('.carousel-slides');
+  const slides = block.querySelectorAll('.carousel-slide');
+  if (!container || !slidesEl || !slides.length) return;
+
+  const bar = document.createElement('div');
+  bar.className = 'carousel-progress';
+  const fill = document.createElement('div');
+  fill.className = 'carousel-progress-fill';
+  bar.append(fill);
+  container.append(bar);
+
+  const update = () => {
+    const index = Math.round(slidesEl.scrollLeft / slidesEl.clientWidth);
+    fill.style.width = `${((index + 1) / slides.length) * 100}%`;
+  };
+
+  slidesEl.addEventListener('scroll', update, { passive: true });
+  update();
+}
+
 let carouselId = 0;
 export default async function decorate(block) {
   carouselId += 1;
@@ -146,6 +168,8 @@ export default async function decorate(block) {
 
   container.append(slidesWrapper);
   block.prepend(container);
+
+  addProgressBar(block);
 
   if (!isSingleSlide) {
     bindEvents(block);
