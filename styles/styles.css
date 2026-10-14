@@ -199,8 +199,8 @@ button.button:disabled {
 
 a.button.primary,
 button.button.primary {
-  border-color: var(--text-color);
-  background-color: var(--text-color);
+  border-color: var(--link-color);
+  background-color: var(--link-color);
   color: var(--background-color);
 }
 
@@ -208,9 +208,9 @@ a.button.primary:hover,
 a.button.primary:focus-visible,
 button.button.primary:hover,
 button.button.primary:focus-visible {
-  border-color: var(--dark-color);
-  background-color: var(--dark-color);
-  color: var(--light-color);
+  border-color: var(--link-hover-color);
+  background-color: var(--link-hover-color);
+  color: var(--background-color);
 }
 
 a.button.primary[aria-disabled="true"],
