@@ -93,24 +93,50 @@ function createSlide(row, slideIndex, carouselId) {
 }
 
 function addProgressBar(block) {
+  // place the progress bar inside the slides container so CSS top positioning aligns
   const container = block.querySelector('.carousel-slides-container');
   const slidesEl = block.querySelector('.carousel-slides');
   const slides = block.querySelectorAll('.carousel-slide');
   if (!container || !slidesEl || !slides.length) return;
 
+  // avoid adding multiple progress bars if decorate() runs more than once
+  const existing = container.querySelector('.carousel-progress');
+  if (existing) existing.remove();
+
   const bar = document.createElement('div');
   bar.className = 'carousel-progress';
+  bar.setAttribute('role', 'progressbar');
+  bar.setAttribute('aria-valuemin', '0');
+  bar.setAttribute('aria-valuemax', '100');
+  bar.setAttribute('aria-valuenow', '0');
+
   const fill = document.createElement('div');
   fill.className = 'carousel-progress-fill';
   bar.append(fill);
   container.append(bar);
 
   const update = () => {
-    const index = Math.round(slidesEl.scrollLeft / slidesEl.clientWidth);
-    fill.style.width = `${((index + 1) / slides.length) * 100}%`;
+    const maxScrollable = slidesEl.scrollWidth - slidesEl.clientWidth;
+    let pct = 0;
+    if (maxScrollable > 0) {
+      pct = (slidesEl.scrollLeft / maxScrollable) * 100;
+    } else {
+      // fallback to discrete slide index if there's no overflow
+      const index = Math.round(slidesEl.scrollLeft / slidesEl.clientWidth);
+      pct = ((index + 1) / slides.length) * 100;
+    }
+    pct = Math.max(0, Math.min(100, pct));
+    fill.style.width = `${pct}%`;
+    bar.setAttribute('aria-valuenow', String(Math.round(pct)));
   };
 
+  // update on scroll and when layout changes
   slidesEl.addEventListener('scroll', update, { passive: true });
+  const ro = new ResizeObserver(update);
+  ro.observe(slidesEl);
+  ro.observe(container);
+
+  // initial update
   update();
 }
 
