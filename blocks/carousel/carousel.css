@@ -1,6 +1,6 @@
- .carousel .carousel-slides-container {
+.carousel .carousel-slides-container {
   position: relative;
-  padding-top: var(--header-height, 120px); /* space for the nav */
+  padding-top: var(--header-height, 20px); /* space for the nav */
 }
 
 .carousel .carousel-slides,
