@@ -353,3 +353,9 @@ header nav .nav-hamburger button,
 header.is-stuck nav .nav-hamburger button {
   background-color: transparent !important;
 }
+
+/* when mobile menu is open, use the theme background (keep this last so it wins) */
+header .nav-wrapper:has(nav[aria-expanded='true']),
+header.is-stuck .nav-wrapper:has(nav[aria-expanded='true']) {
+  background-color: var(--background-color) !important;
+}
