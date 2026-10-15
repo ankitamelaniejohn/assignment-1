@@ -119,3 +119,45 @@
   margin: 16px;
   text-align: center;
 }
+
+/* Blue text by default */
+.cards.second {
+  --second-blue: #0066cc; /* change to your brand blue */
+}
+
+.cards.second > ul > li {
+  color: var(--second-blue);
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+}
+
+.cards.second .cards-card-body p {
+  color: var(--second-blue);
+  transition: color 0.3s ease;
+}
+
+.cards.second > ul > li img {
+  transition: filter 0.3s ease;
+}
+
+/* Hover: blue background, white text, white image */
+.cards.second > ul > li:hover {
+  background-color: var(--second-blue);
+  border-color: var(--second-blue);
+}
+
+.cards.second > ul > li:hover .cards-card-body p {
+  color: #fff;
+}
+
+/* Turns any image into a solid white silhouette */
+.cards.second > ul > li:hover img {
+  filter: brightness(0) invert(1);
+}
+
+/* Accessibility: ensure focus styles are visible for interactive cards */
+.cards > ul > li:focus-within,
+.cards.small > ul > li:focus-within,
+.cards.second > ul > li:focus-within {
+  outline: 3px solid Highlight;
+  outline-offset: 4px;
+}
