@@ -328,3 +328,28 @@ header nav .nav-tools {
     padding: 8px 0;
   }
 }
+
+/* header background: always white, slightly see-through */
+header .nav-wrapper,
+header.is-stuck .nav-wrapper {
+  background-color: rgb(255 255 255 / 75%) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  backdrop-filter: blur(8px) !important;
+  width: 100%;
+}
+
+/* dark text so it never disappears on the white background */
+header .nav-wrapper,
+header nav a:any-link,
+header nav .nav-hamburger button,
+header.is-stuck .nav-wrapper,
+header.is-stuck nav a:any-link,
+header.is-stuck nav .nav-hamburger button {
+  color: #000 !important;
+}
+
+/* hamburger button stays transparent so it doesn't paint a second box */
+header nav .nav-hamburger button,
+header.is-stuck nav .nav-hamburger button {
+  background-color: transparent !important;
+}
