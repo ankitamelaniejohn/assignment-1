@@ -25,11 +25,11 @@ header.is-stuck nav .nav-hamburger button {
   background-color: transparent;
 }
 
-/* white text once stuck */
+/* text color once stuck */
 header.is-stuck .nav-wrapper,
 header.is-stuck nav a:any-link,
 header.is-stuck nav .nav-hamburger button {
-  color: #fff;
+  color: #000; /* or var(--text-color) to match your theme */
 }
 
 /* keep a solid background while the mobile menu is open, so links stay readable */
