@@ -26,10 +26,30 @@
   object-fit: cover;
 }
 
-/* Small variant: smaller images and tighter grid */
+/* Small variant: centered, evenly spaced cards */
 .cards.small > ul {
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;   /* centers each row on the page */
+  gap: 32px;                 /* same space horizontally and vertically */
+  max-width: 1100px;         /* adjust to your layout width */
+  margin: 0 auto;            /* centers the whole block */
+  padding: 24px 16px;        /* room so the shadow isn't clipped */
+}
+
+.cards.small > ul > li {
+  flex: 0 1 200px;           /* every card has the same width */
+  border: 1px solid #ececec;
+  border-radius: 8px;
+  background-color: var(--background-color);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 10%), 0 12px 32px rgb(0 0 0 / 8%);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Optional hover lift */
+.cards.small > ul > li:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgb(0 0 0 / 14%), 0 20px 40px rgb(0 0 0 / 10%);
 }
 
 .cards.small .cards-card-image {
