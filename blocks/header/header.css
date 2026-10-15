@@ -13,9 +13,9 @@ header .nav-wrapper {
   transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
 }
 
-/* once stuck (class added by JS): translucent grey, overlay-style */
+/* once stuck (class added by JS): translucent white, overlay-style */
 header.is-stuck .nav-wrapper {
-  background-color: rgb(128 128 128 / 40%); /* lower the % for less opacity */
+  background-color: rgb(255 255 255 / 75%); /* lower the % for more see-through */
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
 }
