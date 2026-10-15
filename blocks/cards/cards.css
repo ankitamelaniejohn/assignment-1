@@ -25,3 +25,32 @@
   aspect-ratio: 4 / 3;
   object-fit: cover;
 }
+
+/* Small variant: smaller images and tighter grid */
+.cards.small > ul {
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+}
+
+.cards.small .cards-card-image {
+  display: flex;
+  justify-content: center;
+  padding-top: 16px;
+}
+
+.cards.small > ul > li img {
+  width: 80px;           /* adjust to the size you want */
+  height: 80px;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+}
+
+.cards.small .cards-card-body {
+  margin: 12px;
+  text-align: center;
+}
+
+/* Keeps the width steady while digits change */
+.cards.small h3 {
+  font-variant-numeric: tabular-nums;
+}
