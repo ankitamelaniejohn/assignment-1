@@ -74,3 +74,48 @@
 .cards.small h3 {
   font-variant-numeric: tabular-nums;
 }
+
+
+/* Second variant: centered cards, large uncropped images of equal size */
+.cards.second > ul {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;   /* centers every row, including a partial last row */
+  gap: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.cards.second > ul > li {
+  flex: 0 1 300px;           /* same width for every card */
+  border: 1px solid #ececec;
+  border-radius: 8px;
+  background-color: var(--background-color);
+  overflow: hidden;
+}
+
+/* Fixed-size image box so all images take the same space */
+.cards.second .cards-card-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 4 / 3;       /* change to 1 / 1 or 16 / 9 if you prefer */
+  padding: 16px;
+  box-sizing: border-box;
+  line-height: 0;
+}
+
+/* contain = scale to fit, never crop */
+.cards.second > ul > li img {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;        /* overrides the 4/3 from the base .cards rule */
+  object-fit: contain;
+}
+
+.cards.second .cards-card-body {
+  margin: 16px;
+  text-align: center;
+}
