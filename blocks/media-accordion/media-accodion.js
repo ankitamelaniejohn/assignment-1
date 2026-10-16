@@ -1,82 +1,55 @@
 let instance = 0;
 
-const isHeading = (el) => /^H[1-6]$/.test(el.tagName);
-
-// A paragraph that contains only bold text, e.g. **Shipping details**
-const isBoldLine = (el) => el.tagName === 'P'
-  && el.children.length === 1
-  && el.firstElementChild.tagName === 'STRONG'
-  && el.textContent.trim() === el.firstElementChild.textContent.trim();
+// Accordion title = any heading (H1-H6) or a bold-only paragraph
+const isTitle = (el) => /^H[1-6]$/.test(el.tagName)
+  || (el.tagName === 'P'
+    && el.children.length === 1
+    && el.firstElementChild.tagName === 'STRONG'
+    && el.textContent.trim() === el.firstElementChild.textContent.trim());
 
 /**
- * Which elements are accordion titles?
- * 1. H3 (preferred)
- * 2. otherwise any heading after the first one (first = intro heading)
- * 3. otherwise bold-only paragraphs
+ * Media + Accordion
+ * Cell 1: image. Cell 2: accordion.
+ * In the accordion cell every heading starts an item and the content
+ * that follows it (until the next heading) is the panel.
  */
-function getTitleTest(children) {
-  if (children.some((el) => el.tagName === 'H3')) return (el) => el.tagName === 'H3';
-  const headings = children.filter(isHeading);
-  if (headings.length > 1) return (el) => isHeading(el) && el !== headings[0];
-  if (children.some(isBoldLine)) return isBoldLine;
-  return () => false;
-}
-
 export default function decorate(block) {
-  // Works whether authored as 1 row x 2 cells, 2 rows x 1 cell, or anything similar
   let cells = [...block.querySelectorAll(':scope > div > div')];
   if (!cells.length) cells = [...block.children];
 
   const mediaCell = cells.find((cell) => cell.querySelector('picture, img'));
-  if (!mediaCell) return;
+  if (!mediaCell) {
+    // eslint-disable-next-line no-console
+    console.warn('media-accordion: no image found in block', block);
+    return;
+  }
 
   const otherCells = cells.filter((cell) => cell !== mediaCell);
   const mediaFirst = otherCells.length === 0
     || cells.indexOf(mediaCell) < cells.indexOf(otherCells[0]);
 
-  // Media column: the picture(s). Any text sharing the image cell goes to content.
   const media = document.createElement('div');
   media.className = 'media-accordion-media';
-  const textFromMediaCell = [];
+  const strayText = [];
   [...mediaCell.children].forEach((el) => {
-    if (el.querySelector('picture, img') || el.matches('picture, img')) media.append(el);
-    else textFromMediaCell.push(el);
+    if (el.matches('picture, img') || el.querySelector('picture, img')) media.append(el);
+    else strayText.push(el);
   });
 
-  // Content column: everything that is not the image
-  const children = [
-    ...(mediaFirst ? [] : textFromMediaCell),
+  const elements = [
+    ...(mediaFirst ? [] : strayText),
     ...otherCells.flatMap((cell) => [...cell.children]),
-    ...(mediaFirst ? textFromMediaCell : []),
+    ...(mediaFirst ? strayText : []),
   ];
-  const isTitle = getTitleTest(children);
 
-  const intro = document.createElement('div');
-  intro.className = 'media-accordion-intro';
-  const items = [];
-  let current = null;
+  const accordion = document.createElement('div');
+  accordion.className = 'media-accordion-items';
+  instance += 1;
 
-  children.forEach((el) => {
+  const pre = [];
+  let panel = null;
+  elements.forEach((el) => {
     if (isTitle(el)) {
-      current = { title: el, panel: [] };
-      items.push(current);
-    } else if (current) {
-      current.panel.push(el);
-    } else {
-      intro.append(el);
-    }
-  });
-
-  const content = document.createElement('div');
-  content.className = 'media-accordion-content';
-  if (intro.children.length) content.append(intro);
-
-  if (items.length) {
-    instance += 1;
-    const accordion = document.createElement('div');
-    accordion.className = 'media-accordion-items';
-
-    items.forEach(({ title, panel }) => {
       const details = document.createElement('details');
       details.className = 'media-accordion-item';
       details.name = `media-accordion-${instance}`;
@@ -85,19 +58,24 @@ export default function decorate(block) {
       summary.className = 'media-accordion-label';
       const label = document.createElement('span');
       label.className = 'media-accordion-title';
-      label.textContent = title.textContent.trim();
+      label.textContent = el.textContent.trim();
       summary.append(label);
 
-      const body = document.createElement('div');
-      body.className = 'media-accordion-panel';
-      body.append(...panel);
-
-      details.append(summary, body);
+      panel = document.createElement('div');
+      panel.className = 'media-accordion-panel';
+      details.append(summary, panel);
       accordion.append(details);
-    });
+    } else if (panel) {
+      panel.append(el);
+    } else {
+      // Content before the first heading stays visible above the accordion
+      pre.push(el);
+    }
+  });
 
-    content.append(accordion);
-  }
+  const content = document.createElement('div');
+  content.className = 'media-accordion-content';
+  content.append(...pre, accordion);
 
   block.replaceChildren(...(mediaFirst ? [media, content] : [content, media]));
 }
