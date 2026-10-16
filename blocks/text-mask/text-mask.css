@@ -1,0 +1,30 @@
+.text-mask {
+  padding: 40px 0;
+}
+
+.text-mask .text-mask-text {
+  margin: 0;
+  font-size: clamp(3rem, 12vw, 10rem);
+  font-weight: 900;
+  line-height: 1.05;
+  text-align: center;
+  color: #000; /* fallback */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed; /* image stays still, text scrolls over it */
+}
+
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .text-mask .text-mask-text {
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+}
+
+/* iOS Safari ignores fixed backgrounds */
+@supports (-webkit-touch-callout: none) {
+  .text-mask .text-mask-text {
+    background-attachment: scroll;
+  }
+}
