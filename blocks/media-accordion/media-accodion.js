@@ -9,7 +9,7 @@ const isBoldLine = (el) => el.tagName === 'P'
   && el.textContent.trim() === el.firstElementChild.textContent.trim();
 
 /**
- * Decide which elements in the text cell are accordion titles.
+ * Which elements are accordion titles?
  * 1. H3 (preferred)
  * 2. otherwise any heading after the first one (first = intro heading)
  * 3. otherwise bold-only paragraphs
@@ -23,22 +23,32 @@ function getTitleTest(children) {
 }
 
 export default function decorate(block) {
-  // Support both <div><div>img</div><div>text</div></div> and flat cells
-  const row = block.firstElementChild;
-  if (!row) return;
-  const cells = [...row.children];
-  if (cells.length < 2) return;
+  // Works whether authored as 1 row x 2 cells, 2 rows x 1 cell, or anything similar
+  let cells = [...block.querySelectorAll(':scope > div > div')];
+  if (!cells.length) cells = [...block.children];
 
   const mediaCell = cells.find((cell) => cell.querySelector('picture, img'));
-  const contentCell = cells.find((cell) => cell !== mediaCell);
-  if (!mediaCell || !contentCell) return;
-  const mediaFirst = cells.indexOf(mediaCell) === 0;
+  if (!mediaCell) return;
 
+  const otherCells = cells.filter((cell) => cell !== mediaCell);
+  const mediaFirst = otherCells.length === 0
+    || cells.indexOf(mediaCell) < cells.indexOf(otherCells[0]);
+
+  // Media column: the picture(s). Any text sharing the image cell goes to content.
   const media = document.createElement('div');
   media.className = 'media-accordion-media';
-  media.append(...mediaCell.childNodes);
+  const textFromMediaCell = [];
+  [...mediaCell.children].forEach((el) => {
+    if (el.querySelector('picture, img') || el.matches('picture, img')) media.append(el);
+    else textFromMediaCell.push(el);
+  });
 
-  const children = [...contentCell.children];
+  // Content column: everything that is not the image
+  const children = [
+    ...(mediaFirst ? [] : textFromMediaCell),
+    ...otherCells.flatMap((cell) => [...cell.children]),
+    ...(mediaFirst ? textFromMediaCell : []),
+  ];
   const isTitle = getTitleTest(children);
 
   const intro = document.createElement('div');
