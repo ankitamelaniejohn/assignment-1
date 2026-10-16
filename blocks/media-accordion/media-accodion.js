@@ -1,108 +1,93 @@
 let instance = 0;
 
-/**
- * Media + Accordion block
- * Authoring:
- * | Image | Content |
- *
- * Content:
- * Intro text
- * H3
- * Accordion Content
- * H3
- * Accordion Content
- *
- * @param {Element} block
- */
-export default function decorate(block) {
-  block.classList.add('media-accordion');
+const isHeading = (el) => /^H[1-6]$/.test(el.tagName);
 
+// A paragraph that contains only bold text, e.g. **Shipping details**
+const isBoldLine = (el) => el.tagName === 'P'
+  && el.children.length === 1
+  && el.firstElementChild.tagName === 'STRONG'
+  && el.textContent.trim() === el.firstElementChild.textContent.trim();
+
+/**
+ * Decide which elements in the text cell are accordion titles.
+ * 1. H3 (preferred)
+ * 2. otherwise any heading after the first one (first = intro heading)
+ * 3. otherwise bold-only paragraphs
+ */
+function getTitleTest(children) {
+  if (children.some((el) => el.tagName === 'H3')) return (el) => el.tagName === 'H3';
+  const headings = children.filter(isHeading);
+  if (headings.length > 1) return (el) => isHeading(el) && el !== headings[0];
+  if (children.some(isBoldLine)) return isBoldLine;
+  return () => false;
+}
+
+export default function decorate(block) {
+  // Support both <div><div>img</div><div>text</div></div> and flat cells
   const row = block.firstElementChild;
   if (!row) return;
-
   const cells = [...row.children];
   if (cells.length < 2) return;
 
-  const mediaCell = cells.find((cell) =>
-    cell.querySelector('picture, img'),
-  );
-
+  const mediaCell = cells.find((cell) => cell.querySelector('picture, img'));
   const contentCell = cells.find((cell) => cell !== mediaCell);
-
   if (!mediaCell || !contentCell) return;
+  const mediaFirst = cells.indexOf(mediaCell) === 0;
 
-  const mediaIndex = cells.indexOf(mediaCell);
-
-  // Media column
   const media = document.createElement('div');
   media.className = 'media-accordion-media';
   media.append(...mediaCell.childNodes);
 
-  // Content column
-  const content = document.createElement('div');
-  content.className = 'media-accordion-content';
+  const children = [...contentCell.children];
+  const isTitle = getTitleTest(children);
 
   const intro = document.createElement('div');
   intro.className = 'media-accordion-intro';
+  const items = [];
+  let current = null;
 
-  const accordion = document.createElement('div');
-  accordion.className = 'media-accordion-items';
-
-  const elements = [...contentCell.querySelectorAll('h3, p, ul, ol, div')];
-
-  let currentDetails = null;
-  let hasAccordion = false;
-
-  elements.forEach((el) => {
-    if (el.tagName === 'H3') {
-      hasAccordion = true;
-
-      currentDetails = document.createElement('details');
-      currentDetails.className = 'media-accordion-item';
-
-      const summary = document.createElement('summary');
-      summary.className = 'media-accordion-label';
-
-      const heading = el.cloneNode(true);
-      summary.append(heading);
-
-      const panel = document.createElement('div');
-      panel.className = 'media-accordion-panel';
-
-      currentDetails.append(summary, panel);
-      accordion.append(currentDetails);
-    } else if (currentDetails) {
-      currentDetails
-        .querySelector('.media-accordion-panel')
-        .append(el.cloneNode(true));
+  children.forEach((el) => {
+    if (isTitle(el)) {
+      current = { title: el, panel: [] };
+      items.push(current);
+    } else if (current) {
+      current.panel.push(el);
     } else {
-      intro.append(el.cloneNode(true));
+      intro.append(el);
     }
   });
 
-  if (intro.childNodes.length) {
-    content.append(intro);
-  }
+  const content = document.createElement('div');
+  content.className = 'media-accordion-content';
+  if (intro.children.length) content.append(intro);
 
-  if (hasAccordion) {
+  if (items.length) {
     instance += 1;
+    const accordion = document.createElement('div');
+    accordion.className = 'media-accordion-items';
 
-    accordion
-      .querySelectorAll('.media-accordion-item')
-      .forEach((item) => {
-        item.setAttribute('name', `media-accordion-${instance}`);
-      });
+    items.forEach(({ title, panel }) => {
+      const details = document.createElement('details');
+      details.className = 'media-accordion-item';
+      details.name = `media-accordion-${instance}`;
 
-    // Open first item by default
-    const firstItem = accordion.querySelector('.media-accordion-item');
-    if (firstItem) {
-      firstItem.open = true;
-    }
+      const summary = document.createElement('summary');
+      summary.className = 'media-accordion-label';
+      const label = document.createElement('span');
+      label.className = 'media-accordion-title';
+      label.textContent = title.textContent.trim();
+      summary.append(label);
+
+      const body = document.createElement('div');
+      body.className = 'media-accordion-panel';
+      body.append(...panel);
+
+      details.append(summary, body);
+      accordion.append(details);
+    });
 
     content.append(accordion);
   }
 
-  block.replaceChildren(
-    ...(mediaIndex === 0 ? [media, content] : [content, media]),
-  );
+  block.replaceChildren(...(mediaFirst ? [media, content] : [content, media]));
 }
