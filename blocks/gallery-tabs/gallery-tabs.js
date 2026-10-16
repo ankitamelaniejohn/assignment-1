@@ -10,32 +10,36 @@ export default function decorate(block) {
     const [labelCell, contentCell] = row.children;
     if (!labelCell || !contentCell) return;
 
-    // Button from the first cell
     const button = document.createElement('button');
     button.type = 'button';
     button.setAttribute('role', 'tab');
     button.textContent = labelCell.textContent.trim();
 
-    // Panel from the second cell
     const panel = document.createElement('div');
     panel.className = 'gallery-tabs-panel';
     panel.setAttribute('role', 'tabpanel');
 
-    // Pair each image with the text line that follows it
     const items = [];
     [...contentCell.children].forEach((el) => {
-      const pic = el.matches('picture') ? el : el.querySelector('picture');
-      if (pic) {
-        items.push({ pic, caption: pic.querySelector('img')?.alt || '' });
-      } else if (el.textContent.trim() && items.length) {
-        items[items.length - 1].caption = el.textContent.trim();
+      // text of this element, ignoring any image inside it
+      const clone = el.cloneNode(true);
+      clone.querySelectorAll('picture, img').forEach((p) => p.remove());
+      const txt = clone.textContent.trim();
+
+      const pics = el.matches('picture') ? [el] : [...el.querySelectorAll('picture')];
+      if (pics.length) {
+        pics.forEach((pic) => {
+          items.push({ pic, caption: txt || pic.querySelector('img')?.alt || '' });
+        });
+      } else if (txt && items.length) {
+        items[items.length - 1].caption = txt;
       }
     });
 
     items.forEach(({ pic, caption }) => {
       const item = document.createElement('div');
       item.className = 'gallery-tabs-item';
-      item.tabIndex = 0; // lets keyboard and touch users see the text too
+      item.tabIndex = 0;
       item.append(pic);
       if (caption) {
         const text = document.createElement('div');
