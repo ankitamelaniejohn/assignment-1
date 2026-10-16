@@ -2,18 +2,33 @@ let instance = 0;
 
 /**
  * Media + Accordion block
- * Authoring: one row, two cells (image cell and text cell, in either order).
- * In the text cell, everything before the first H3 is intro content.
- * Each H3 starts an accordion item; the content after it is the panel.
+ * Authoring:
+ * | Image | Content |
+ *
+ * Content:
+ * Intro text
+ * H3
+ * Accordion Content
+ * H3
+ * Accordion Content
+ *
  * @param {Element} block
  */
 export default function decorate(block) {
+  block.classList.add('media-accordion');
+
   const row = block.firstElementChild;
   if (!row) return;
 
   const cells = [...row.children];
-  const mediaCell = cells.find((cell) => cell.querySelector('picture, img'));
+  if (cells.length < 2) return;
+
+  const mediaCell = cells.find((cell) =>
+    cell.querySelector('picture, img'),
+  );
+
   const contentCell = cells.find((cell) => cell !== mediaCell);
+
   if (!mediaCell || !contentCell) return;
 
   const mediaIndex = cells.indexOf(mediaCell);
@@ -23,53 +38,71 @@ export default function decorate(block) {
   media.className = 'media-accordion-media';
   media.append(...mediaCell.childNodes);
 
-  // Content column: split into intro + accordion items
-  const intro = document.createElement('div');
-  intro.className = 'media-accordion-intro';
-  const items = [];
-  let current = null;
-
-  [...contentCell.children].forEach((el) => {
-    if (el.tagName === 'H3') {
-      current = { title: el, panel: [] };
-      items.push(current);
-    } else if (current) {
-      current.panel.push(el);
-    } else {
-      intro.append(el);
-    }
-  });
-
+  // Content column
   const content = document.createElement('div');
   content.className = 'media-accordion-content';
-  if (intro.children.length) content.append(intro);
 
-  if (items.length) {
-    instance += 1;
-    const accordion = document.createElement('div');
-    accordion.className = 'media-accordion-items';
+  const intro = document.createElement('div');
+  intro.className = 'media-accordion-intro';
 
-    items.forEach(({ title, panel }) => {
-      const details = document.createElement('details');
-      details.className = 'media-accordion-item';
-      // Same name = browser keeps only one item open at a time
-      details.name = `media-accordion-${instance}`;
+  const accordion = document.createElement('div');
+  accordion.className = 'media-accordion-items';
+
+  const elements = [...contentCell.querySelectorAll('h3, p, ul, ol, div')];
+
+  let currentDetails = null;
+  let hasAccordion = false;
+
+  elements.forEach((el) => {
+    if (el.tagName === 'H3') {
+      hasAccordion = true;
+
+      currentDetails = document.createElement('details');
+      currentDetails.className = 'media-accordion-item';
 
       const summary = document.createElement('summary');
       summary.className = 'media-accordion-label';
-      summary.append(title);
 
-      const body = document.createElement('div');
-      body.className = 'media-accordion-panel';
-      body.append(...panel);
+      const heading = el.cloneNode(true);
+      summary.append(heading);
 
-      details.append(summary, body);
-      accordion.append(details);
-    });
+      const panel = document.createElement('div');
+      panel.className = 'media-accordion-panel';
+
+      currentDetails.append(summary, panel);
+      accordion.append(currentDetails);
+    } else if (currentDetails) {
+      currentDetails
+        .querySelector('.media-accordion-panel')
+        .append(el.cloneNode(true));
+    } else {
+      intro.append(el.cloneNode(true));
+    }
+  });
+
+  if (intro.childNodes.length) {
+    content.append(intro);
+  }
+
+  if (hasAccordion) {
+    instance += 1;
+
+    accordion
+      .querySelectorAll('.media-accordion-item')
+      .forEach((item) => {
+        item.setAttribute('name', `media-accordion-${instance}`);
+      });
+
+    // Open first item by default
+    const firstItem = accordion.querySelector('.media-accordion-item');
+    if (firstItem) {
+      firstItem.open = true;
+    }
 
     content.append(accordion);
   }
 
-  // Keep authored column order (image first or second)
-  block.replaceChildren(...(mediaIndex === 0 ? [media, content] : [content, media]));
+  block.replaceChildren(
+    ...(mediaIndex === 0 ? [media, content] : [content, media]),
+  );
 }
