@@ -9,12 +9,14 @@
 .media-accordion .media-accordion-media img {
   display: block;
   width: 100%;
+  max-width: 100%;
 }
 
 .media-accordion .media-accordion-media img {
   height: auto;
   aspect-ratio: 4 / 3;
   object-fit: cover;
+  object-position: center;
 }
 
 /* Text column */
@@ -63,7 +65,9 @@
   transition: transform 0.2s ease;
 }
 
-.media-accordion .media-accordion-item[open] > .media-accordion-label::after {
+/* Support both generic [open] and details[open] markup for the open state */
+.media-accordion .media-accordion-item[open] > .media-accordion-label::after,
+details.media-accordion-item[open] > .media-accordion-label::after {
   transform: rotate(-135deg);
 }
 
@@ -85,7 +89,7 @@
 }
 
 /* Two columns from tablet up */
-@media (width >= 768px) {
+@media (min-width: 768px) {
   .media-accordion {
     grid-template-columns: 1fr 1fr;
     gap: 48px;
