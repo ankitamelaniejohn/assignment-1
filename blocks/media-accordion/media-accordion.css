@@ -1,0 +1,105 @@
+.media-accordion {
+  display: grid;
+  gap: 24px;
+  align-items: start;
+}
+
+/* Image column */
+.media-accordion .media-accordion-media picture,
+.media-accordion .media-accordion-media img {
+  display: block;
+  width: 100%;
+}
+
+.media-accordion .media-accordion-media img {
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+/* Text column */
+.media-accordion .media-accordion-intro > :first-child {
+  margin-top: 0;
+}
+
+.media-accordion .media-accordion-items {
+  margin-top: 24px;
+  border-top: 1px solid var(--light-color, #e0e0e0);
+}
+
+/* Accordion */
+.media-accordion .media-accordion-item {
+  border-bottom: 1px solid var(--light-color, #e0e0e0);
+}
+
+.media-accordion .media-accordion-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 0;
+  cursor: pointer;
+  list-style: none;
+}
+
+.media-accordion .media-accordion-label::-webkit-details-marker {
+  display: none;
+}
+
+.media-accordion .media-accordion-label h3 {
+  margin: 0;
+  font-size: var(--body-font-size-m, 18px);
+  line-height: 1.4;
+}
+
+.media-accordion .media-accordion-label::after {
+  content: '';
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid currentcolor;
+  border-bottom: 2px solid currentcolor;
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+}
+
+.media-accordion .media-accordion-item[open] > .media-accordion-label::after {
+  transform: rotate(-135deg);
+}
+
+.media-accordion .media-accordion-label:focus-visible {
+  outline: 2px solid var(--link-color, #035fe6);
+  outline-offset: 2px;
+}
+
+.media-accordion .media-accordion-panel {
+  padding-bottom: 16px;
+}
+
+.media-accordion .media-accordion-panel > :first-child {
+  margin-top: 0;
+}
+
+.media-accordion .media-accordion-panel > :last-child {
+  margin-bottom: 0;
+}
+
+/* Two columns from tablet up */
+@media (width >= 900px) {
+  .media-accordion {
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+  }
+
+  /* Keep the image in view while a long accordion is read */
+  .media-accordion .media-accordion-media {
+    position: sticky;
+    top: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .media-accordion .media-accordion-label::after {
+    transition: none;
+  }
+}
