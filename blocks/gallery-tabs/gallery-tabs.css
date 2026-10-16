@@ -6,24 +6,33 @@
   margin-bottom: 24px;
 }
 
+/* blue buttons */
 .gallery-tabs .gallery-tabs-list button {
   padding: 10px 24px;
-  border: 2px solid #333;
+  border: 2px solid #0066ff;
   border-radius: 24px;
   background: transparent;
-  color: #333;
+  color: #0066ff;
   font-size: 1rem;
   cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.gallery-tabs .gallery-tabs-list button:hover {
+  background: #e6f0ff;
 }
 
 .gallery-tabs .gallery-tabs-list button[aria-selected='true'] {
-  background: #333;
+  background: #0066ff;
+  border-color: #0066ff;
   color: #fff;
 }
 
+/* images centered */
 .gallery-tabs .gallery-tabs-panel {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 16px;
 }
 
@@ -35,6 +44,9 @@
 .gallery-tabs .gallery-tabs-item {
   position: relative;
   overflow: hidden;
+  flex: 0 0 auto;
+  width: 300px;
+  max-width: 100%;
   aspect-ratio: 4 / 3;
 }
 
