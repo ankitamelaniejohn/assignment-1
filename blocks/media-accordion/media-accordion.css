@@ -46,9 +46,9 @@
   display: none;
 }
 
-.media-accordion .media-accordion-label h3 {
-  margin: 0;
+.media-accordion .media-accordion-title {
   font-size: var(--body-font-size-m, 18px);
+  font-weight: 600;
   line-height: 1.4;
 }
 
@@ -85,7 +85,7 @@
 }
 
 /* Two columns from tablet up */
-@media (width >= 900px) {
+@media (width >= 768px) {
   .media-accordion {
     grid-template-columns: 1fr 1fr;
     gap: 48px;
