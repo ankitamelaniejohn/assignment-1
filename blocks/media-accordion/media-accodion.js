@@ -75,7 +75,17 @@ export default function decorate(block) {
 
   const content = document.createElement('div');
   content.className = 'media-accordion-content';
-  content.append(...pre, accordion);
+
+  // Wrap intro content so the .media-accordion-intro CSS applies
+  if (pre.length) {
+    const intro = document.createElement('div');
+    intro.className = 'media-accordion-intro';
+    intro.append(...pre);
+    content.append(intro);
+  }
+
+  // Only add the accordion if at least one title was found
+  if (accordion.children.length) content.append(accordion);
 
   block.replaceChildren(...(mediaFirst ? [media, content] : [content, media]));
 }
