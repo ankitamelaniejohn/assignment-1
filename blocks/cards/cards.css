@@ -161,3 +161,75 @@
   outline: 3px solid Highlight;
   outline-offset: 4px;
 }
+
+
+/* Gallery variant: image series, small caption overlapping the image's bottom edge, zoom on hover */
+.cards.gallery > ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 32px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.cards.gallery > ul > li {
+  position: relative;
+  border: 0;
+  background: transparent;
+  /* no overflow:hidden here, so the caption can overlap the image */
+}
+
+/* The image box clips the zoomed image, so it never spills outside */
+.cards.gallery .cards-card-image {
+  overflow: hidden;
+  border-radius: 8px;
+  line-height: 0;
+}
+
+.cards.gallery .cards-card-image picture {
+  display: block;
+}
+
+.cards.gallery > ul > li img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+/* Zoom in on hover */
+.cards.gallery > ul > li:hover img {
+  transform: scale(1.1);
+}
+
+/* Small caption pulled up so it sits slightly over the image */
+.cards.gallery .cards-card-body {
+  position: relative;       /* needed for z-index to take effect */
+  z-index: 1;
+  width: fit-content;
+  max-width: calc(100% - 32px);
+  margin: -20px 16px 0;     /* negative top margin = overlap; increase for more */
+  padding: 8px 14px;
+  background-color: var(--background-color);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 12%);
+  font-size: 0.875rem;
+  line-height: 1.3;
+}
+
+.cards.gallery .cards-card-body p {
+  margin: 0;
+}
+
+/* Respect users who prefer less motion */
+@media (prefers-reduced-motion: reduce) {
+  .cards.gallery > ul > li img {
+    transition: none;
+  }
+
+  .cards.gallery > ul > li:hover img {
+    transform: none;
+  }
+}
