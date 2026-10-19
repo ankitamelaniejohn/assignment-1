@@ -116,14 +116,15 @@ function buildOptionInput(field, option) {
 }
 
 /**
- * Creates a fieldset containing radio/checkbox options
+ * Creates a fieldset containing radio/checkbox options.
+ * If no options are given, the label is used as a single checkbox's text.
  * @param {Object} field - Field configuration object
  * @param {string} controlled - Controlled field name
  * @returns {HTMLFieldSetElement} Fieldset containing options
  */
 function buildOptions(field, controlled) {
   const { type, label, required } = field;
-  const options = field.options;
+  const { options } = field;
   const single = !options;
   const list = single ? [label] : options.split(',');
   if (!list[0]) return null;
@@ -134,7 +135,9 @@ function buildOptions(field, controlled) {
     fieldset.dataset.controller = controller;
     fieldset.dataset.condition = controlled;
   }
-  if (label) fieldset.append(buildLabel(label, 'legend', null, required === 'true'));
+  if (label && !single) {
+    fieldset.append(buildLabel(label, 'legend', null, required === 'true'));
+  }
 
   list.forEach((o) => {
     const option = o.trim();
@@ -363,7 +366,7 @@ function initConditionals(form, controllerConfig) {
         // remove required attribute when hidden
         if (input.hasAttribute('required')) {
           // store original required state if not already stored
-n          if (!input.dataset.originalRequired) {
+          if (!input.dataset.originalRequired) {
             input.dataset.originalRequired = 'true';
           }
           input.removeAttribute('required');
@@ -535,7 +538,7 @@ function enableSubmission(form, submit, fields) {
 /**
  * Creates a form field based on field configuration
  * @param {Object} field - Field configuration object
- * @returns {HTMLElement} Form field element (fieldset, div, or button)
+ * @returns {HTMLElement|null} Form field element (fieldset, div, or button)
  */
 function buildField(field) {
   const {
@@ -551,7 +554,7 @@ function buildField(field) {
   // radio/checkbox groups get a fieldset
   if (type === 'radio' || type === 'checkbox') {
     const fieldset = buildOptions(field, controlled);
-    if (help) {
+    if (fieldset && help) {
       const helpText = writeHelpText(help, generateId(fieldName));
       fieldset.append(helpText);
     }
@@ -569,7 +572,7 @@ function buildField(field) {
 
   if (type === 'select') {
     const select = buildSelect(field, controlled);
-    if (help) {
+    if (select && help) {
       const helpText = writeHelpText(help, generateId(fieldName));
       select.append(helpText);
     }
@@ -622,7 +625,8 @@ function buildForm(fields, submit) {
     if (field.type === 'submit' || field.type === 'reset') {
       buttons.push(field);
     } else if (field.type !== 'confirmation') {
-      form.append(buildField(field));
+      const el = buildField(field);
+      if (el) form.append(el);
     }
   });
 
@@ -656,6 +660,8 @@ export default function decorate(block) {
             if (!resp.ok) throw new Error(`${resp.status}: ${resp.statusText}`);
             const json = await resp.json();
             if (!json.data) throw new Error(`No form fields at ${source}`);
+
+            // normalise header case/whitespace and skip empty rows
             const data = json.data
               .map((row) => Object.fromEntries(
                 Object.entries(row).map(([k, v]) => [
@@ -664,10 +670,12 @@ export default function decorate(block) {
                 ]),
               ))
               .filter((row) => row.type);
+
+            // sheets may give "TRUE"; the code checks for 'true'
             data.forEach((row) => {
               if (row.required) row.required = String(row.required).toLowerCase();
             });
-            console.log('form data', data);
+
             const form = buildForm(data, submit);
             block.replaceChildren(form);
             block.removeAttribute('style');
