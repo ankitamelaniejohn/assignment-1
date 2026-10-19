@@ -134,7 +134,7 @@ function buildOptions(field, controlled) {
     fieldset.dataset.controller = controller;
     fieldset.dataset.condition = controlled;
   }
-  if (!single) fieldset.append(buildLabel(label, 'legend', null, required === 'true'));
+  if (label) fieldset.append(buildLabel(label, 'legend', null, required === 'true'));
 
   list.forEach((o) => {
     const option = o.trim();
@@ -363,7 +363,7 @@ function initConditionals(form, controllerConfig) {
         // remove required attribute when hidden
         if (input.hasAttribute('required')) {
           // store original required state if not already stored
-          if (!input.dataset.originalRequired) {
+n          if (!input.dataset.originalRequired) {
             input.dataset.originalRequired = 'true';
           }
           input.removeAttribute('required');
