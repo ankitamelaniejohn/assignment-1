@@ -14,6 +14,7 @@ const isTitle = (el) => /^H[1-6]$/.test(el.tagName)
  * that follows it (until the next heading) is the panel.
  */
 export default function decorate(block) {
+  console.log('media-accordion decorate running', block.outerHTML);
   let cells = [...block.querySelectorAll(':scope > div > div')];
   if (!cells.length) cells = [...block.children];
 
