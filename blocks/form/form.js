@@ -122,10 +122,11 @@ function buildOptionInput(field, option) {
  * @returns {HTMLFieldSetElement} Fieldset containing options
  */
 function buildOptions(field, controlled) {
-  const {
-    type, options, label, required,
-  } = field;
-  if (!options) return null;
+  const { type, label, required } = field;
+  const options = field.options;
+  const single = !options;
+  const list = single ? [label] : options.split(',');
+  if (!list[0]) return null;
 
   const fieldset = createElement('fieldset', `form-field ${type}-field`);
   if (controlled) {
@@ -133,13 +134,14 @@ function buildOptions(field, controlled) {
     fieldset.dataset.controller = controller;
     fieldset.dataset.condition = controlled;
   }
-  fieldset.append(buildLabel(label, 'legend', null, required === 'true'));
+  if (!single) fieldset.append(buildLabel(label, 'legend', null, required === 'true'));
 
-  options.split(',').forEach((o) => {
+  list.forEach((o) => {
     const option = o.trim();
     const input = buildOptionInput(field, option);
+    if (single) input.id = generateId(field.field);
     const span = createElement('span');
-    const labelEl = buildLabel(option, 'label', input.id);
+    const labelEl = buildLabel(option, 'label', input.id, single && required === 'true');
     labelEl.prepend(input, span);
     fieldset.append(labelEl);
   });
