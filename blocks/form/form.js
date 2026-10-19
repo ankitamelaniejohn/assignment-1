@@ -656,6 +656,7 @@ export default function decorate(block) {
             if (!resp.ok) throw new Error(`${resp.status}: ${resp.statusText}`);
             const { data } = await resp.json();
             if (!data) throw new Error(`No form fields at ${source}`);
+            console.log(data[0]);
             const form = buildForm(data, submit);
             block.replaceChildren(form);
             block.removeAttribute('style');
