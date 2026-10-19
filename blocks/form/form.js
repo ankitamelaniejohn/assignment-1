@@ -654,9 +654,20 @@ export default function decorate(block) {
           try {
             const resp = await fetch(new URL(source, window.location.origin));
             if (!resp.ok) throw new Error(`${resp.status}: ${resp.statusText}`);
-            const { data } = await resp.json();
-            if (!data) throw new Error(`No form fields at ${source}`);
-            console.log(data[0]);
+            const json = await resp.json();
+            if (!json.data) throw new Error(`No form fields at ${source}`);
+            const data = json.data
+              .map((row) => Object.fromEntries(
+                Object.entries(row).map(([k, v]) => [
+                  k.trim().toLowerCase(),
+                  typeof v === 'string' ? v.trim() : v,
+                ]),
+              ))
+              .filter((row) => row.type);
+            data.forEach((row) => {
+              if (row.required) row.required = String(row.required).toLowerCase();
+            });
+            console.log('form data', data);
             const form = buildForm(data, submit);
             block.replaceChildren(form);
             block.removeAttribute('style');
